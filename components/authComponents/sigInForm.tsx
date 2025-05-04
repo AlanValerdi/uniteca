@@ -6,9 +6,9 @@ export function SignInForm(){
     
         <div className="flex flex-col gap-6">
             <div className="flex flex-col items-center gap-2 text-center">
-            <h1 className="text-2xl font-bold">Create an Account</h1>
+            <h1 className="text-2xl font-bold">Crea una cuenta</h1>
             <p className="text-muted-foreground text-sm text-balance">
-                Sign in with one of our options below, and enter to the new digital era.
+                Inicia sesión con alguna de nustreas opciones, y únete a la era digital.
             </p>
             </div>
             <div className="grid gap-6">
@@ -20,9 +20,9 @@ export function SignInForm(){
             
             </div>
             <div className="text-center text-sm">
-            Do you have an account?{" "}
+            ¿Tienes una cuenta?{" "}
             <a href="#" className="underline underline-offset-4">
-                Log In
+                Inicia sesión
             </a>
             </div>
         </div>

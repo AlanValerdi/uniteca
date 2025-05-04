@@ -16,7 +16,7 @@ export default function SignInButtonGithub() {
             fill="currentColor"
           />
         </svg>
-        {isPending ? "Signing in..." : "Sign in with GitHub"}
+        {isPending ? "Accediendo..." : "Únete a través de GitHub"}
       </Button>
     </form> 
   )

@@ -12,12 +12,12 @@ import { GalleryVerticalEnd } from 'lucide-react'
 const navItems = [
 {
     id: 1,
-    text: "Search books",
+    text: "Buscar Libros",
     link: "/"
 },
 {
     id: 2,
-    text: "Loans",
+    text: "Préstamos",
     link: "loans"
 },
 ]
@@ -47,9 +47,20 @@ export default function DynamicNavbar({ session }: { session: any | null }) {
                     </div>
                     <div className={`
                         fixed inset-x-0 h-[100dvh] lg:h-max top-0 lg:opacity-100 left-0 bg-white dark:bg-gray-950 lg:!bg-transparent py-32 lg:py-0 px-5 sm:px-10 md:px-12 lg:px-0 w-full lg:top-0 lg:relative  lg:flex lg:justify-between duration-300 ease-linear
-                        ${openNavbar ? "" : "-translate-y-10 opacity-0 invisible lg:visible  lg:translate-y-0"}
+                        ${openNavbar ? "flex flex-col items-center" : "-translate-y-10 opacity-0 invisible lg:visible  lg:translate-y-0"}
                     `}>
-                        <ul className="flex flex-col lg:flex-row gap-6 lg:items-center text-white lg:w-full lg:pl-10">
+                        {openNavbar ? ( 
+                            // On mobile when Navbar is open
+                            <div className='py-6'>
+                            <Link href="/" className="font-semibold flex items-center gap-x-2">
+                                <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-full">
+                                    <GalleryVerticalEnd className="size-5" />
+                                </div>
+                                <span className="text-2xl text-black">UNITECA</span>
+                            </Link>
+                            </div>
+                        ) : ""}
+                        <ul className={`flex flex-col lg:flex-row gap-6 lg:items-center text-white lg:w-full lg:pl-10 ${openNavbar ? "flex flex-col align-middle items-center text-gray-950 font-semibold underline" : "" }`}>
                             {
                                 navItems.map(navItem => {
                                     const isActive = pathname === navItem.link || pathname === `/${navItem.link}`
@@ -57,7 +68,7 @@ export default function DynamicNavbar({ session }: { session: any | null }) {
                                     return(
                                         <li key={navItem.id}>
                                             
-                                            <Link href={navItem.link} className={`relative py-2.5 duration-300 ease-linear hover:text-[rgb(16,45,63)] ${isActive ? "text-gray-950 font-semibold underline" : "" }`}>
+                                            <Link href={navItem.link} className={`relative py-2.5 duration-300 ease-linear hover:text-[rgb(16,45,63)] text-black ${isActive ? "text-[rgb(33,101,114)] font-semibold underline" : "" }`}>
                                                 {navItem.text}
                                             </Link>
                                         </li>    
@@ -65,13 +76,10 @@ export default function DynamicNavbar({ session }: { session: any | null }) {
                                 })
                             }
                         </ul>
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-4  lg:min-w-max mt-10 lg:mt-0">
-                            {/* <Link href="#" className="h-10 flex items-center justify-center w-full sm:w-max rounded-full px-5 border border-gray-200 dark:border-gray-800 text-purple-600 dark:text-gray-300">
-                                Login
-                            </Link> */}
+                        <div className={`flex flex-col sm:flex-row sm:items-center gap-4  lg:min-w-max mt-10 lg:mt-0 ${openNavbar ? "flex flex-col align-middle items-center" : ""}`}>
                             { session?.user ? (
                                 <>
-                                    <p>Hello, {session.user.name}</p>
+                                    <p>Bienvenido, {session.user.name}</p>
                                     <div className='relative size-8 overflow-hidden rounded-full'>
                                         <Image
                                             src={session?.user.image}
@@ -84,7 +92,7 @@ export default function DynamicNavbar({ session }: { session: any | null }) {
                                 </>
                             ) : (
                                 <Link href="signIn">
-                                    <Button variant="default" className='bg-[rgb(33,101,114)]'>Become a member</Button>
+                                    <Button variant="default" className='bg-[rgb(33,101,114)]'>Conviertete en un miembro</Button>
                                 </Link>
                             )
                             }

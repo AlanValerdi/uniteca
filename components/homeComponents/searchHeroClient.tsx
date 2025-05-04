@@ -10,10 +10,11 @@ export default function SearchHeroClient({ defaultBooks }: { defaultBooks: Book[
   const [query, setQuery] = useState("");
   const [books, setBooks] = useState<Book[]>(defaultBooks);
 
-  const basePlaceholder = "Search by";
-  const changingWords = useMemo(() => ["author", "genre", "title"], []);
+  const basePlaceholder = "Busca por";
+  const changingWords = useMemo(() => ["Autor", "Género", "Título"], []);
   const [wordIndex, setWordIndex] = useState(0);
   const [displayedWord, setDisplayedWord] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [fullWord, setFullWord] = useState(changingWords[0]);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -65,7 +66,7 @@ export default function SearchHeroClient({ defaultBooks }: { defaultBooks: Book[
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <button className="flex text-white justify-center items-center w-max px-6 h-12 rounded-full bg-[rgb(33,101,114)]">
+          <button className="flex text-white justify-center items-center w-max px-6 h-12 rounded-full bg-[rgb(33,101,114)] cursor-pointer">
             <Search />
           </button>
         </form>
@@ -78,7 +79,7 @@ export default function SearchHeroClient({ defaultBooks }: { defaultBooks: Book[
             <div className="flex flex-col items-center justify-center text-center col-span-full">
               <BookXIcon className="h-16 w-16 text-muted-foreground mb-4" />
               <p className="text-gray-600 dark:text-gray-300 text-lg">
-              We currently don&apos;t have your book, stay tuned for future updates!
+              Aún no contamos con tu libro, mantente al pendiente para futuras actualizaciones
               </p>
             </div>
           

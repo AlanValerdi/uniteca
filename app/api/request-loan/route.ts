@@ -24,12 +24,25 @@ export async function POST(req: Request) {
   }
 
   try {
-    const existingLoan = await prisma.loan.findFirst({
-        where: {
-            bookId,
-            borrowerId,
-        },
+    const isReturned = await prisma.loan.findFirst({
+      where: {
+        bookId,// id: bookId,
+        borrowerId,   
+      },select: {
+        status: true,
+      }, 
     })
+
+    
+    const existingLoan = await prisma.loan.findFirst({
+    where: {
+      bookId,
+      borrowerId,
+      status: {
+        not: "returned", // Ensure the loan is not already returned
+      },
+    },
+    });
 
     const availability = await prisma.book.findUnique({
         where: {
@@ -39,13 +52,17 @@ export async function POST(req: Request) {
             available: true,
         },
     })
+    
+    if (isReturned && isReturned.status !== 'returned') {
+      return NextResponse.json({ success: false, error: 'El libro aún no ha sido devuelto' }, { status: 400 });
+    }
 
     if (availability?.available === false) {
-        return NextResponse.json({ success: false, error: 'This book is out of stock' }, { status: 400 })
+        return NextResponse.json({ success: false, error: 'El libro no está disponible' }, { status: 400 })
     }
 
     if (existingLoan){
-        return NextResponse.json({ success: false, error: "You can't borrow the same book twice" }, { status: 400})
+        return NextResponse.json({ success: false, error: "No puedes pedir un libro dos veces" }, { status: 400})
     }
 
     const loan = await prisma.loan.create({

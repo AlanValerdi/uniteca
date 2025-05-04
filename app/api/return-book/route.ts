@@ -39,18 +39,13 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ error: 'Loan not found' }, { status: 404 });
     }
 
-    const newDueDate = new Date(loan.dueDate!)
-    const renewDate = new Date(loan.borrowDate!);
-
-    
-    renewDate.setDate(renewDate.getDate())  
-    newDueDate.setDate(newDueDate.getDate())
+  
+    const returnDate = new Date(); 
 
     await prisma.loan.update({
       where: { id: loanId },
       data: {
-        dueDate: newDueDate,
-        borrowDate: renewDate,
+        returnDate: returnDate,
         status: "returned"
       },
     });

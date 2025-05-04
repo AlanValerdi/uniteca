@@ -13,7 +13,7 @@ export default function SignInButtonGoogle() {
     <form action={() => startTransition(() => signInWithGoogle())}>
       <Button type="submit" variant="outline" disabled={isPending} className="w-full">
         <CgGoogle/>
-        {isPending ? "Signing in..." : "Sign in with Google"}
+        {isPending ? "Accediendo..." : "Únete a través de Google"}
       </Button>
     </form> 
   )

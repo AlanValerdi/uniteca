@@ -21,7 +21,7 @@ type LoanStatus = 'pending' | 'approved' | 'rejected' | "returned";
 const statusMap = {
     Good: {
       icon: <FaRegSmile />,
-      text: "Good",
+      text: "Excelente",
       color: "text-green-600 dark:text-green-400",
     },
     Normal: {
@@ -31,7 +31,7 @@ const statusMap = {
     },
     Damaged: {
       icon: <CgSmileSad />,
-      text: "Damaged",
+      text: "Dañado",
       color: "text-red-600 dark:text-red-400",
     },
 };
@@ -53,7 +53,7 @@ interface Loan {
 
 function setState(bookstatus: string) {
     const state = statusMap[bookstatus as keyof typeof statusMap];
-    if (!state) return <span className="text-muted-foreground">Unknown state</span>;
+    if (!state) return <span className="text-muted-foreground">Estado desconocido</span>;
   
     return (
       <span className={`inline-flex items-center gap-1 ${state.color}`}>
@@ -97,22 +97,22 @@ export default function LoansList() {
       const res = await fetch(`/api/delete-loan?loanId=${loanId}`, {
         method: "DELETE",
       });
-  
+      
       const data = await res.json();
   
       if (!res.ok) {
-        toast.error("There was an error in your request", {
+        toast.error("Hubo un error en tu solicitud", {
           description: data.error,    
         })
       }
   
       setLoans((prevLoans) => prevLoans.filter((loan) => loan.id !== loanId));
-      toast.success("Loan request cancelled succesfully", {
-        description: "Maybe you wanted to request another book",
+      toast.success("Préstamo cancelado correctamente", {
+        description: "Quizás querías algún otro libro",
       })
 
     } catch (error) {
-      console.error('Error deleting loan:', error);
+      console.error('Error cancelando el préstamo:', error);
     }
   };
   
@@ -136,19 +136,19 @@ export default function LoansList() {
             {loans.length === 0 ? (
              <div className="flex flex-col items-center justify-center py-100 px-4 text-center">
                 <BookXIcon className="h-16 w-16 text-muted-foreground mb-4" />
-                <h3 className="text-xl font-medium mb-2">There is no Loans yet!</h3>
-                <p className="text-muted-foreground max-w-md">Go and find your favourite book, they will appear here.</p>
+                <h3 className="text-xl font-medium mb-2">¡Aún no tienes prestamos!</h3>
+                <p className="text-muted-foreground max-w-md">Búsca tu libro favorita y solivita un préstamo, aparecerá aquí.</p>
             </div>
             ) : (
             <div className="container mx-auto px-4 py-40 md:px-20 md:py-10 lg:px-38 lg:py-40">
-            <h1 className="text-3xl font-bold mb-6">Your Loans</h1>
+            <h1 className="text-3xl font-bold mb-6">Tus préstamos</h1>
             <Tabs defaultValue="all" className="w-full">
-                <TabsList className="mb-4">
-                    <TabsTrigger value="all">All Loans ({loans.length})</TabsTrigger>
-                    <TabsTrigger value="pending">Pending({loans.filter((loan) => loan.status === 'pending').length})</TabsTrigger>
-                    <TabsTrigger value="approved">Approved({loans.filter((loan) => loan.status === 'approved').length})</TabsTrigger>
-                    <TabsTrigger value="rejected">Rejected({loans.filter((loan) => loan.status === 'rejected').length})</TabsTrigger>
-                    <TabsTrigger value="returned">Returned({loans.filter((loan) => loan.status === 'returned').length})</TabsTrigger>
+                <TabsList className="mb-4 overflow-x-auto whitespace-nowrap max-w-full scrollbar-hide">
+                    <TabsTrigger value="all" className='cursor-pointer'>Todos ({loans.length})</TabsTrigger>
+                    <TabsTrigger value="pending" className='cursor-pointer'>Pendientes({loans.filter((loan) => loan.status === 'pending').length})</TabsTrigger>
+                    <TabsTrigger value="approved" className='cursor-pointer'>Aprobados({loans.filter((loan) => loan.status === 'approved').length})</TabsTrigger>
+                    <TabsTrigger value="rejected" className='cursor-pointer'>Rechazados({loans.filter((loan) => loan.status === 'rejected').length})</TabsTrigger>
+                    <TabsTrigger value="returned" className='cursor-pointer'>Devueltos({loans.filter((loan) => loan.status === 'returned').length})</TabsTrigger>
                 </TabsList>
                 <TabsContent value="all" className="space-y-4">
                      <>
@@ -276,7 +276,7 @@ function LoadCard({loan, deleteLoan}: {loan:Loan; deleteLoan: (loanId: string ) 
                     <p className="text-muted-foreground">{loan.book.author}</p>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">Borrow state:</span> 
+                      <span className="text-muted-foreground">Estado de la solicitud:</span> 
                       <LoanStatusBadge status={loan.status} />
 
                     </div>
@@ -284,31 +284,35 @@ function LoadCard({loan, deleteLoan}: {loan:Loan; deleteLoan: (loanId: string ) 
                     { loan.status == "approved" || loan.status == "rejected" || loan.status == "returned" ? (
                         <></>
                     ) : (
-                      <Button variant={'destructive'} onClick={() => deleteLoan(loan.id)}>Delete</Button>
+                      <Button variant={'destructive'} onClick={() => deleteLoan(loan.id)} className='cursor-pointer'>Cancelar Prestamo</Button>
                     )}
                 </div>
         
                 <Separator className="my-4" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                     <div>
-                    <span className="text-muted-foreground">Requested on:</span> {loan.requestDate}
+                    <span className="text-muted-foreground">Pedido el:</span> {loan.requestDate}
                     </div>
                     <div>
-                    <span className="text-muted-foreground">Due date:</span> {loan.dueDate}
+                    <span className="text-muted-foreground">Fecha de vencimiento:</span> {loan.dueDate}
                     </div>
                 </div>
 
                 <Separator className="my-4" />
-                <p className="text-muted-foreground my-4">Book information:</p>
+                <p className="text-muted-foreground my-4">Información del libro:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm">
                   <div>
-                      <span className="text-muted-foreground">Genre:</span> <Badge>{loan.book.genre}</Badge> 
+                      <span className="text-muted-foreground">Género:</span> <Badge>{loan.book.genre}</Badge> 
                   </div>
                   <div>
-                      <span className="text-muted-foreground">Language:</span> {loan.book.language}
+                  <span className="text-muted-foreground">Idioma: {loan.book.language == "English" ?(
+                                        <>Inglés</>
+                                    ) : loan.book.language == "Spanish" ? (
+                                        <>Español</>
+                                    ) : loan.book.language }</span>  
                   </div>
                   <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground">State:</span>
+                      <span className="text-muted-foreground">Estado del libro:</span>
                       {setState(loan.book.state)}
                   </div>
                 </div>

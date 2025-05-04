@@ -24,6 +24,7 @@ export async function GET() {
         dueDate: true,
         status: true,
         borrowDate: true,
+        returnDate: true,
         book: {
           select: {
             title: true,

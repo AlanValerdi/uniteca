@@ -13,7 +13,7 @@ export default function SignOut() {
         })
       }
     >
-      Sign Out
+      Cerrar sesión
     </Button>
   )
 }

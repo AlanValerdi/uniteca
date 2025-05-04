@@ -13,6 +13,7 @@ import { Badge } from "../ui/badge";
 import { Book } from "@/types/book"
 import { redirect } from "next/navigation";
 import { toast } from "sonner";
+import Link from "next/link";
 
 type Props = {
     book: Book
@@ -21,7 +22,7 @@ type Props = {
 const statusMap = {
     Good: {
       icon: <FaRegSmile />,
-      text: "Good",
+      text: "Excelente",
       color: "text-green-600 dark:text-green-400",
     },
     Normal: {
@@ -31,17 +32,17 @@ const statusMap = {
     },
     Damaged: {
       icon: <CgSmileSad />,
-      text: "Damaged",
+      text: "Dañado",
       color: "text-red-600 dark:text-red-400",
     },
 };
 
 function setAvailability(isAvailable: boolean) {
     if (!isAvailable) {
-        return "Out of Stock"
+        return "Sin entidades"
     }
 
-    return "Available"
+    return "Disponible"
 }
 
 function setState(bookstatus: string) {
@@ -75,13 +76,17 @@ export default function CardBookComponent({ book }: Props){
         const data = await res.json()
     
         if (data.success) {
-            toast.success("Loan requested succesfully", {
-                description: "Go to Loan page to see your Loan",
+            toast.success("La solicitud fue envíada correctamente", {
+                description: (
+                    <>
+                    Ve a la pagina de {<Link href={"loans"} className="underline">Prestamos</Link>} o {<Link href={"loans"} className="underline">haz click aquí</Link>}
+                    </>
+                ),
             })
         } else if (res.status == 401){
             redirect("/signIn")
         }else {
-            toast.error("There was an error in your request", {
+            toast.error("Hubo un error en tu solicitud", {
                 description: data.error,    
             })
         }
@@ -105,18 +110,18 @@ export default function CardBookComponent({ book }: Props){
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1">
-                            <p className="text-sm font-medium">Availability</p>
+                            <p className="text-sm font-medium">Disponibilidad</p>
                             <p className="text-base">{ setAvailability(book.available) }</p>
                         </div>
                         <div className="space-y-1 text-right">
-                            <p className="text-sm font-medium">Book State</p>
+                            <p className="text-sm font-medium">Estado del libro</p>
                             <p className="text-base font-semibold">{ setState(book.state) }</p>
                         </div>
                     </div>
                     <div className="flex justify-center gap-4 pt-2">
-                            <Button className="px-4 bg-[rgb(33,101,114)]" onClick={handleBorrow}>Borrow</Button>
+                            <Button className="px-4 bg-[rgb(33,101,114)] cursor-pointer" onClick={handleBorrow}>Solicitar</Button>
 
-                            <Button className="px-4" variant="outline" onClick={() => setIsDialogOpen(true)}>Preview</Button>
+                            <Button className="px-4 cursor-pointer" variant="outline" onClick={() => setIsDialogOpen(true)}>Mostrar más</Button>
                     </div>
                 </CardContent>
             </Card>
@@ -158,7 +163,11 @@ export default function CardBookComponent({ book }: Props){
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <User className="h-4 w-4 text-muted-foreground" />
-                                    <span className="text-sm">{book.language}</span>
+                                    <span className="text-sm">{book.language == "English" ?(
+                                        <>Inglés</>
+                                    ) : book.language == "Spanish" ? (
+                                        <>Español</>
+                                    ) : book.language }</span>  
                                 </div>
                                 <div>
                                     <Badge variant="secondary">{book.genre} </Badge>
@@ -167,7 +176,7 @@ export default function CardBookComponent({ book }: Props){
 
                             <Separator/>
                             
-                            <Button className="px-4 bg-[rgb(33,101,114)]" onClick={handleBorrow}>Borrow</Button>
+                            <Button className="px-4 bg-[rgb(33,101,114)] cursor-pointer" onClick={handleBorrow}>Solicitar</Button>
 
 
                         </div>
