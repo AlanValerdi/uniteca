@@ -131,7 +131,7 @@ export default function CardBookComponent({ book }: Props){
                 <DialogContent className="w-[90vw] sm:w-[800px] md:max-w-3xl max-h-[90vh] overflow-y-auto sm:rounded-lg">
                     <DialogHeader>
                         <DialogTitle className="text-2xl">{book.title}</DialogTitle>
-                        <DialogDescription className="text-base">By {book.author}</DialogDescription>
+                        <DialogDescription className="text-base">Por: {book.author}</DialogDescription>
                     </DialogHeader>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 py-4">
@@ -146,7 +146,7 @@ export default function CardBookComponent({ book }: Props){
                         </div>
                         <div className="col-span-1 md:col-span-2 space-y-4">
                             <div className="space-y-2">
-                                <h4 className="font-semibold">Description</h4>
+                                <h4 className="font-semibold">Descripciónx</h4>
                                 <p>{ book.description }</p>
                             </div>
                         

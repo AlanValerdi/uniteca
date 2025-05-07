@@ -17,6 +17,7 @@ import LoanSkeleton from './loanSkeleton';
 import { approveLoan, formatDateTime, rejectLoan, renewLoan, returnBook } from "@/app/lib/loanAdminActions";
 import { toast } from "sonner";
 import { ActionDialog } from "./ActionDialog";
+import { QRScannerSection } from "./QrScannerSection";
 
 
 
@@ -135,7 +136,10 @@ export default function LoansAdminList() {
             ) : (
             <div className="container mx-auto px-4 py-40 md:px-20 md:py-10 lg:px-38 lg:py-40">
             <h1 className="text-3xl font-bold mb-6">Administración de prestamos</h1>
-            <Tabs defaultValue="all" className="w-full ">
+            <div className="pb-4">
+                <QRScannerSection onSuccess={fetchLoans}/>
+            </div>
+            <Tabs defaultValue="all" className="w-full">
                 <TabsList className="mb-4 overflow-x-auto whitespace-nowrap max-w-full scrollbar-hide">
                     <TabsTrigger value="all" className='cursor-pointer'>Todos({loans.length})</TabsTrigger>
                     <TabsTrigger value="pending" className='cursor-pointer'>Pendientes({loans.filter((loan) => loan.status === 'pending').length})</TabsTrigger>

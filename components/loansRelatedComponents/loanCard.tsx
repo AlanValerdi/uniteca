@@ -9,11 +9,14 @@ import { LoanStatusBadge } from './loanStatusBadge';
 import { Badge } from '../ui/badge';
 import { FaRegSmile } from 'react-icons/fa';
 import { CgSmileNeutral, CgSmileSad } from 'react-icons/cg';
-import { BookXIcon } from 'lucide-react';
+import { BookXIcon, QrCodeIcon} from 'lucide-react';
 import { Button } from '../ui/button';
 import { toast } from 'sonner';
 import LoanSkeleton from './loanSkeleton';
 import { motion } from "framer-motion";
+import { formatDateTime } from '@/app/lib/loanAdminActions';
+import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "../ui/drawer";
+import { QRCodeSVG } from 'qrcode.react'
 
 
 type LoanStatus = 'pending' | 'approved' | 'rejected' | "returned";
@@ -41,6 +44,7 @@ interface Loan {
   requestDate: string;
   dueDate: string | null;
   status: LoanStatus;
+  returnDate: string | null;
   book: {
     title: string;
     author: string;
@@ -126,7 +130,9 @@ export default function LoansList() {
     return <p>Error: {error}</p>;
   }
 
+
     return(
+
         <div>
             <motion.div
                 initial={{ opacity: 0, y: 30 }}
@@ -255,7 +261,10 @@ export default function LoansList() {
 
 
 function LoadCard({loan, deleteLoan}: {loan:Loan; deleteLoan: (loanId: string ) => void}) {
+    const [showQr, setShowQr] = useState(false);
+
     return(
+        
         <Card>
             <CardContent className="p-6">
             <div className="flex flex-col md:flex-row gap-4">
@@ -278,24 +287,65 @@ function LoadCard({loan, deleteLoan}: {loan:Loan; deleteLoan: (loanId: string ) 
                     <div>
                       <span className="text-muted-foreground">Estado de la solicitud:</span> 
                       <LoanStatusBadge status={loan.status} />
-
                     </div>
-                    {/* TODO: Call the deleete endpoint */}
-                    { loan.status == "approved" || loan.status == "rejected" || loan.status == "returned" ? (
+                    
+                    {/* TODO: Create the qr which is the one the admin could scan */}
+                    { loan.status == "pending"  ? (
+                        <>
+                        <div>
+                            <Drawer>
+                            <DrawerTrigger asChild>
+                                <Button variant="ghost" className="size-12 p-0 flex items-center justify-center">
+                                <QrCodeIcon className="size-10" />
+                                </Button>
+                            </DrawerTrigger>
+                            <DrawerContent>
+                                <DrawerHeader className='items-center align-middle'>
+                                    <DrawerTitle>Crear qr</DrawerTitle>
+                                    <DrawerDescription>Crea tu código qr, muéstralo en tu biblioteca universitaria, y llévate tu libro .</DrawerDescription>
+                                </DrawerHeader>
+                                <div className="flex justify-center items-center py-6">
+                                    {showQr ? (
+                                        <QRCodeSVG
+                                        value={
+                                            typeof window !== 'undefined'
+                                            // ? `${window.location.origin}/admin/approve-loan?loanId=${loan.id}`
+                                            ? `${loan.id}`
+                                            : ''
+                                        }
+                                        size={160}
+                                        level="H"
+                                        />
+                                    ) : (
+                                        <div className="border w-40 h-40 flex items-center justify-center text-muted-foreground">
+                                        
+                                        </div>
+                                    )}
+                                </div>
+                            <DrawerFooter className='flex justify-center items-center'>
+                                <Button className='w-32' onClick={() => setShowQr(true)}>Crear Qr</Button>
+                            </DrawerFooter>
+                            </DrawerContent>
+                            </Drawer>
+                        </div>
+                        <Button variant={'destructive'} onClick={() => deleteLoan(loan.id)} className='cursor-pointer'>Cancelar Prestamo</Button>
+                        </>
+                    )  : loan.status == "rejected" || loan.status == "returned" ? (
                         <></>
                     ) : (
-                      <Button variant={'destructive'} onClick={() => deleteLoan(loan.id)} className='cursor-pointer'>Cancelar Prestamo</Button>
+                      <></>
                     )}
                 </div>
         
                 <Separator className="my-4" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                     <div>
-                    <span className="text-muted-foreground">Pedido el:</span> {loan.requestDate}
+                    <span className="text-muted-foreground">Pedido el:</span> {loan.requestDate ? formatDateTime(loan.requestDate) : "Fecha no disponible"}
                     </div>
                     <div>
-                    <span className="text-muted-foreground">Fecha de vencimiento:</span> {loan.dueDate}
+                    <span className="text-muted-foreground">Fecha de vencimiento:</span> {loan.dueDate ? formatDateTime(loan.dueDate) : "Fecha no disponible"}
                     </div>
+                    
                 </div>
 
                 <Separator className="my-4" />
@@ -316,10 +366,15 @@ function LoadCard({loan, deleteLoan}: {loan:Loan; deleteLoan: (loanId: string ) 
                       {setState(loan.book.state)}
                   </div>
                 </div>
+                {/* TODO: send the button to cancel the loan at the bottom */}
+                {/* <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-sm py-4 sm:items-center sm:justify-center sm:flex sm:flex-col">
+                    <Button variant={'destructive'} onClick={() => deleteLoan(loan.id)} className='cursor-pointer w-34'>Cancelar Prestamo</Button>
+                </div> */}
                 </div>
             </div>
             </CardContent>
         </Card>
+        
       
       
     );
