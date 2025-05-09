@@ -284,7 +284,7 @@ function LoadCard({loan, deleteLoan}: {loan:Loan; deleteLoan: (loanId: string ) 
                     <h3 className="font-semibold text-lg">{loan.book.title}</h3>
                     <p className="text-muted-foreground">{loan.book.author}</p>
                     </div>
-                    <div>
+                    <div className='flex space-x-2'>
                       <span className="text-muted-foreground">Estado de la solicitud:</span> 
                       <LoanStatusBadge status={loan.status} />
                     </div>

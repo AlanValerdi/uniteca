@@ -325,8 +325,10 @@ function LoadCard({loan, refetchLoans }: {loan:Loan, refetchLoans: () => void })
                         <p className="text-muted-foreground">{loan.book.author}</p>
                         </div>
                         <div>
-                        <span className="text-muted-foreground">Estado de la solicitud:</span> 
-                        <LoanStatusBadge status={loan.status} />
+                        <div className="flex space-x-2">
+                            <span className="text-muted-foreground">Estado de la solicitud:</span> 
+                            <LoanStatusBadge status={loan.status} />
+                        </div>
 
                         </div>
                         {/* Action section */}

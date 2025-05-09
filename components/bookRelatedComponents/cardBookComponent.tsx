@@ -146,7 +146,7 @@ export default function CardBookComponent({ book }: Props){
                         </div>
                         <div className="col-span-1 md:col-span-2 space-y-4">
                             <div className="space-y-2">
-                                <h4 className="font-semibold">Descripciónx</h4>
+                                <h4 className="font-semibold">Descripción</h4>
                                 <p>{ book.description }</p>
                             </div>
                         
