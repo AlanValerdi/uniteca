@@ -15,10 +15,10 @@ export default async function getSuggestData(){
 }
 
 export async function signInWithGitHub() {
-    await signIn("github")
+    await signIn("github", {redirectTo: "/"})
 }
 
 export async function signInWithGoogle() {
-    await signIn("google")
+    await signIn("google", {redirectTo: "/"})
 }
 

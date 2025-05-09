@@ -38,7 +38,7 @@ export default function DynamicNavbar({ session }: { session: any | null }) {
             <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-br from-[rgb(33,101,114)] opacity-90 blur-lg dark:from-c dark:blur-xl dark:opacity-40" />
                 <nav className="relative mx-auto lg:max-w-7xl w-full px-5 sm:px-10 md:px-12 lg:px-5 flex gap-x-5 justify-between items-center">
                     <div className="flex items-center min-w-max relative">
-                        <Link href="/" className="font-semibold flex items-center gap-x-2">
+                        <Link href="/" className="font-semibold flex items-center gap-x-2 cursor-pointer" onClick={() => window.location.reload()}>
                             <div className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-full">
                                 <GalleryVerticalEnd className="size-5" />
                             </div>
