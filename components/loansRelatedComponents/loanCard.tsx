@@ -150,11 +150,11 @@ export default function LoansList() {
             <h1 className="text-3xl font-bold mb-6">Tus préstamos</h1>
             <Tabs defaultValue="all" className="w-full">
                 <TabsList className="mb-4 overflow-x-auto whitespace-nowrap max-w-full scrollbar-hide">
-                    <TabsTrigger value="all" className='cursor-pointer'>Todos ({loans.length})</TabsTrigger>
-                    <TabsTrigger value="pending" className='cursor-pointer'>Pendientes({loans.filter((loan) => loan.status === 'pending').length})</TabsTrigger>
                     <TabsTrigger value="approved" className='cursor-pointer'>Aprobados({loans.filter((loan) => loan.status === 'approved').length})</TabsTrigger>
-                    <TabsTrigger value="rejected" className='cursor-pointer'>Rechazados({loans.filter((loan) => loan.status === 'rejected').length})</TabsTrigger>
+                    <TabsTrigger value="pending" className='cursor-pointer'>Pendientes({loans.filter((loan) => loan.status === 'pending').length})</TabsTrigger>
                     <TabsTrigger value="returned" className='cursor-pointer'>Devueltos({loans.filter((loan) => loan.status === 'returned').length})</TabsTrigger>
+                    <TabsTrigger value="all" className='cursor-pointer'>Historial ({loans.length})</TabsTrigger>
+                    {/* <TabsTrigger value="rejected" className='cursor-pointer'>Rechazados({loans.filter((loan) => loan.status === 'rejected').length})</TabsTrigger> */}
                 </TabsList>
                 <TabsContent value="all" className="space-y-4">
                      <>
@@ -232,7 +232,7 @@ export default function LoansList() {
                     )}
                     </>
                 </TabsContent>
-                <TabsContent value="rejected" className="space-y-4">
+                {/* <TabsContent value="rejected" className="space-y-4">
                     <>
                     { loans.filter((loan)=> loan.status == "rejected").
                         map((loan, index) => 
@@ -250,7 +250,7 @@ export default function LoansList() {
                         </motion.div>
                     )}
                     </>
-                </TabsContent>
+                </TabsContent> */}
             </Tabs>
             </div>
             )}
@@ -263,9 +263,24 @@ export default function LoansList() {
 function LoadCard({loan, deleteLoan}: {loan:Loan; deleteLoan: (loanId: string ) => void}) {
     const [showQr, setShowQr] = useState(false);
 
+    const getStatusBorderColor = (status: LoanStatus): string => {
+        switch (status) {
+            case "pending":
+                return "border-1 border-yellow-300 shadow-lg bg-yellow-50 ";
+            case "approved":
+                return "border-1 border-green-300 shadow-lg bg-green-50 ";
+            case "rejected":
+                return "border-1 border-red-300 shadow-lg bg-red-50";
+            case "returned":
+                return "border-1 border-blue-300 shadow-lg bg-blue-50";
+            default:
+                return "border-1 border-gray-300 shadow-lg bg-gray-50";
+        }
+    };
+
     return(
         
-        <Card>
+        <Card className={getStatusBorderColor(loan.status)}>
             <CardContent className="p-6">
             <div className="flex flex-col md:flex-row gap-4">
                 

@@ -303,9 +303,24 @@ function LoadCard({loan, refetchLoans }: {loan:Loan, refetchLoans: () => void })
         }
     }
 
+    const getStatusBorderColor = (status: LoanStatus): string => {
+        switch (status) {
+            case "pending":
+                return "border-2 border-yellow-300";
+            case "approved":
+                return "border-2 border-green-300";
+            case "rejected":
+                return "border-2 border-red-300";
+            case "returned":
+                return "border-2 border-blue-300";
+            default:
+                return "border-2 border-gray-300";
+        }
+    };
+
     return(
         <>
-            <Card>
+            <Card className={getStatusBorderColor(loan.status)}>
                 <CardContent className="p-6">
                 <div className="flex flex-col md:flex-row gap-4">
                     

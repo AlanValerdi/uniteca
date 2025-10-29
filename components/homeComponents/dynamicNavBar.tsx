@@ -20,6 +20,11 @@ const navItems = [
     text: "Préstamos",
     link: "loans"
 },
+{
+    id: 3,
+    text: "Mis Favoritos",
+    link: "favorites"
+},
 ]
 
  

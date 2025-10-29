@@ -3,15 +3,14 @@ import { NextResponse } from 'next/server'
 
 import { auth } from '@/auth' // Asegúrate de importar desde donde tengas tu configuración de auth()
 import { prisma } from '@/app/lib/prisma'
+import { admin } from '@/lib/admin'
 
 
 export async function POST(req: Request) {
   const session = await auth()
+  const adminUser = await admin()
 
   if (!session?.user?.id) {
-    
-    
-    
     return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     
   }
@@ -22,6 +21,7 @@ export async function POST(req: Request) {
   if (!bookId) {
     return NextResponse.json({ success: false, error: 'Missing bookId' }, { status: 400 })
   }
+
 
   try {
     const isReturned = await prisma.loan.findFirst({
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
       bookId,
       borrowerId,
       status: {
-        not: "returned", // Ensure the loan is not already returned
+        not: "returned", 
       },
     },
     });
@@ -53,22 +53,31 @@ export async function POST(req: Request) {
         },
     })
     
+    // if (adminUser?.role === "admin") {
+    //   return NextResponse.json({success : false, error: "El administrador no puede adquirir un libro"}, {status: 400});
+    // }
+
+    
+    if (availability?.available === false) {
+      return NextResponse.json({ success: false, error: 'El libro no está disponible' }, { status: 400 })
+    }
+    
+    if (existingLoan){
+      return NextResponse.json({ success: false, error: "No puedes pedir un libro dos veces" }, { status: 400})
+    }
+
+    if (adminUser?.role === "admin") {
+      return NextResponse.json({success : false, error: "El administrador no puede adquirir un libro"}, {status: 400});
+    }
+    
     if (isReturned && isReturned.status !== 'returned') {
       return NextResponse.json({ success: false, error: 'El libro aún no ha sido devuelto' }, { status: 400 });
-    }
-
-    if (availability?.available === false) {
-        return NextResponse.json({ success: false, error: 'El libro no está disponible' }, { status: 400 })
-    }
-
-    if (existingLoan){
-        return NextResponse.json({ success: false, error: "No puedes pedir un libro dos veces" }, { status: 400})
     }
 
     const loan = await prisma.loan.create({
       data: {
         bookId,
-        borrowerId,
+        borrowerId,   
       },
     })
 
