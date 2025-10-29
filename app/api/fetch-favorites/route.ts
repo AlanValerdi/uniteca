@@ -39,7 +39,7 @@ export async function GET() {
     });
 
     // Extract books from favorites
-    const books = favorites.map((fav) => fav.book);
+    const books = favorites.map((fav: typeof favorites[number]) => fav.book);
 
     return NextResponse.json({ success: true, books });
   } catch (error) {
