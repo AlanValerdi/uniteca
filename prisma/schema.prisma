@@ -1,0 +1,149 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id            String          @id @default(cuid())
+  name          String?
+  email         String          @unique
+  emailVerified DateTime?
+  image         String?
+  role          String?         @default("user")
+  accounts      Account[]
+  sessions      Session[]
+  // Optional for WebAuthn support
+  Authenticator Authenticator[]
+  loans         Loan[]          @relation("UserLoans")
+  favorites     Favorite[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+  model VerificationToken {
+    identifier String
+    token      String
+    expires    DateTime
+
+    @@id([identifier, token])
+  }
+
+  // Optional for WebAuthn support
+  model Authenticator {
+    credentialID         String  @unique
+    userId               String
+    providerAccountId    String
+    credentialPublicKey  String
+    counter              Int
+    credentialDeviceType String
+    credentialBackedUp   Boolean
+    transports           String?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@id([userId, credentialID])
+  }
+
+  model Book {
+    id            String   @id @default(uuid())
+    author        String
+    available     Boolean
+    description   String
+    genre         String
+    imgUrl        String
+    language      String
+    pages         Int
+    publishedYear Int
+    state         String
+    title         String
+    loans         Loan[]
+    favorites     Favorite[]
+  }
+
+  model Favorite {
+    id        String   @id @default(uuid())
+    userId    String
+    bookId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    book      Book     @relation(fields: [bookId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+
+    @@unique([userId, bookId])
+    @@index([userId])
+    @@index([bookId])
+  }
+
+  model Loan {
+    id           String      @id @default(uuid())
+
+    bookId       String
+    book         Book        @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+    borrowerId   String
+    borrower     User        @relation("UserLoans", fields: [borrowerId], references: [id], onDelete: Cascade)
+
+    requestDate  DateTime    @default(now()) // when the user click the borrow button
+    borrowDate   DateTime?                   // when the admin approves the request
+    dueDate      DateTime?                   // if the adm approves then storage the day of the approve plus 15 days)
+    returnDate   DateTime?
+
+    status       LoanStatus  @default(pending)
+
+    createdAt    DateTime    @default(now())
+    updatedAt    DateTime    @updatedAt
+
+    @@index([bookId])
+    @@index([borrowerId])
+    @@index([status])
+  }
+
+  enum LoanStatus {
+    pending
+    approved
+    rejected
+    returned
+  }
