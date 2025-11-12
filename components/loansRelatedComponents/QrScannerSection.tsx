@@ -11,6 +11,8 @@ export function QRScannerSection({ onSuccess }: { onSuccess: () => void }) {
   const qrRegionRef = useRef<HTMLDivElement>(null);
   const html5QrcodeRef = useRef<Html5Qrcode>(null);
 
+  
+
   useEffect(() => {
     if (!scannerOpen) {
         //stop scanner if it is running   
@@ -36,17 +38,17 @@ export function QRScannerSection({ onSuccess }: { onSuccess: () => void }) {
           html5Qr
             .stop()
             .finally(() => {
-              setScannerOpen(false);
+              setScannerOpen(true);
               approveLoan(loanId)
                 .then(() => {
                   toast.success('Préstamo aprobado vía QR');
-                  onSuccess();
+                  onSuccess(); // Refresh the loans list
                 })
                 .catch(() => toast.error('Error al aprobar vía QR'));
             });
         },
-        (errorMsg) => {
-          console.log(errorMsg)
+        () => {
+          // Suppress QR parse errors - they're normal when no code is detected
         }
       )
       .catch((err) => {
@@ -56,7 +58,8 @@ export function QRScannerSection({ onSuccess }: { onSuccess: () => void }) {
 
     // refresh
     return () => {
-      html5Qr.stop().catch(() => {});
+      // This is unbound, idk why this is not working properly, but it does work if this is commented 
+      // html5Qr.stop().catch(() => {});
     };
   }, [scannerOpen, onSuccess]);
 
