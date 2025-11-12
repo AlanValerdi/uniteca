@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import Image from 'next/image'
 import LogOutButton from '../authComponents/logOutButton'
+import { NotificationBell } from '../notificationComponents/NotificationBell'
 import { GalleryVerticalEnd } from 'lucide-react'
  
 const navItems = [
@@ -84,6 +85,7 @@ export default function DynamicNavbar({ session }: { session: any | null }) {
                         <div className={`flex flex-col sm:flex-row sm:items-center gap-4  lg:min-w-max mt-10 lg:mt-0 ${openNavbar ? "flex flex-col align-middle items-center" : ""}`}>
                             { session?.user ? (
                                 <>
+                                    <NotificationBell />
                                     <p>Bienvenido, {session.user.name}</p>
                                     <div className='relative size-8 overflow-hidden rounded-full'>
                                         <Image

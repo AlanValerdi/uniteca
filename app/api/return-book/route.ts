@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/app/lib/prisma';
 import { auth } from '@/auth';
 import getAdmin from '@/app/actions/getAdmin';
+import { createNotification, getNotificationContent } from '@/lib/createNotification';
 
 export async function PATCH(req: Request) {
   const session = await auth();
@@ -19,27 +20,30 @@ export async function PATCH(req: Request) {
   }
 
   try {
-    const loan = await prisma.loan.findUnique({ where: { id: loanId } });
-
-    const approved = await prisma.loan.findUnique({
-        where: {
-            id: loanId
+    const loan = await prisma.loan.findUnique({ 
+      where: { id: loanId },
+      include: {
+        book: {
+          select: {
+            title: true,
+          },
         },
-        select:{
-            status: true
-        }
+        borrower: {
+          select: {
+            id: true,
+          },
+        },
+      },
     });
-
-
-    if(approved?.status !== "approved"){
-        return NextResponse.json({ error: 'You cannot return a book if it is not approved' }, { status: 400 });
-    }
 
     if (!loan) {
       return NextResponse.json({ error: 'Loan not found' }, { status: 404 });
     }
 
-  
+    if(loan.status !== "approved"){
+        return NextResponse.json({ error: 'You cannot return a book if it is not approved' }, { status: 400 });
+    }
+
     const returnDate = new Date(); 
 
     await prisma.loan.update({
@@ -48,6 +52,16 @@ export async function PATCH(req: Request) {
         returnDate: returnDate,
         status: "returned"
       },
+    });
+
+    // Create notification for the borrower
+    const { title, message } = getNotificationContent('LOAN_RETURNED', loan.book.title);
+    await createNotification({
+      userId: loan.borrower.id,
+      type: 'LOAN_RETURNED',
+      title,
+      message,
+      loanId: loan.id,
     });
 
     return NextResponse.json({ success: true });
