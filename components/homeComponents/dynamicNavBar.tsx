@@ -85,7 +85,10 @@ export default function DynamicNavbar({ session }: { session: any | null }) {
                         <div className={`flex flex-col sm:flex-row sm:items-center gap-4  lg:min-w-max mt-10 lg:mt-0 ${openNavbar ? "flex flex-col align-middle items-center" : ""}`}>
                             { session?.user ? (
                                 <>
-                                    <NotificationBell />
+                                    {/* NotificationBell only visible on desktop, on mobile it's in the header */}
+                                    <div className="hidden lg:block">
+                                        <NotificationBell />
+                                    </div>
                                     <p>Bienvenido, {session.user.name}</p>
                                     <div className='relative size-8 overflow-hidden rounded-full'>
                                         <Image
@@ -109,7 +112,11 @@ export default function DynamicNavbar({ session }: { session: any | null }) {
                             {/* <Button variant="default" className='bg-[rgb(33,101,114)]'>Sign Up</Button> */}
                         </div>
                     </div>
-                    <div className="flex items-center lg:hidden">
+                    <div className="flex items-center gap-3 lg:hidden">
+                        {/* Notification bell visible on mobile */}
+                        {session?.user && (
+                            <NotificationBell />
+                        )}
                         <button onClick={() => { toggleNavbar() }} className="outline-none border-l border-l-purple-100 dark:border-l-gray-800 pl-3 relative py-3">
                             <span className="sr-only">Toggle navbar</span>
                             <span aria-hidden="true" className={`
