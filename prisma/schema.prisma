@@ -28,6 +28,7 @@ model User {
   Authenticator Authenticator[]
   loans         Loan[]          @relation("UserLoans")
   favorites     Favorite[]
+  notifications Notification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -133,12 +134,43 @@ model Session {
 
     status       LoanStatus  @default(pending)
 
+    notifications Notification[]
+
     createdAt    DateTime    @default(now())
     updatedAt    DateTime    @updatedAt
 
     @@index([bookId])
     @@index([borrowerId])
     @@index([status])
+  }
+
+  model Notification {
+    id        String           @id @default(uuid())
+    userId    String
+    user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+    
+    type      NotificationType
+    title     String
+    message   String
+    
+    loanId    String?
+    loan      Loan?            @relation(fields: [loanId], references: [id], onDelete: Cascade)
+    
+    read      Boolean          @default(false)
+    createdAt DateTime         @default(now())
+    
+    @@index([userId])
+    @@index([read])
+    @@index([createdAt])
+  }
+
+  enum NotificationType {
+    LOAN_APPROVED
+    LOAN_REJECTED
+    LOAN_RETURNED
+    LOAN_RENEWED
+    LOAN_DUE_SOON
+    LOAN_OVERDUE
   }
 
   enum LoanStatus {
