@@ -7,7 +7,7 @@ export default async function Home(){
   return(
     <>
       <DynamicNavbar session={session}/>
-      <HeroSection/>
+      <HeroSection session={session}/>
     </>
   )
 }

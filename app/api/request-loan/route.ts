@@ -24,24 +24,15 @@ export async function POST(req: Request) {
 
 
   try {
-    const isReturned = await prisma.loan.findFirst({
+    // Check if user has an active loan (pending or approved) for this book
+    const existingActiveLoan = await prisma.loan.findFirst({
       where: {
-        bookId,// id: bookId,
-        borrowerId,   
-      },select: {
-        status: true,
-      }, 
-    })
-
-    
-    const existingLoan = await prisma.loan.findFirst({
-    where: {
-      bookId,
-      borrowerId,
-      status: {
-        not: "returned", 
+        bookId,
+        borrowerId,
+        status: {
+          in: ["pending", "approved"], // Only block if pending or approved
+        },
       },
-    },
     });
 
     const availability = await prisma.book.findUnique({
@@ -53,25 +44,16 @@ export async function POST(req: Request) {
         },
     })
     
-    // if (adminUser?.role === "admin") {
-    //   return NextResponse.json({success : false, error: "El administrador no puede adquirir un libro"}, {status: 400});
-    // }
-
-    
     if (availability?.available === false) {
       return NextResponse.json({ success: false, error: 'El libro no está disponible' }, { status: 400 })
     }
     
-    if (existingLoan){
-      return NextResponse.json({ success: false, error: "No puedes pedir un libro dos veces" }, { status: 400})
+    if (existingActiveLoan){
+      return NextResponse.json({ success: false, error: "Ya tienes un préstamo activo para este libro" }, { status: 400})
     }
 
     if (adminUser?.role === "admin") {
       return NextResponse.json({success : false, error: "El administrador no puede adquirir un libro"}, {status: 400});
-    }
-    
-    if (isReturned && isReturned.status !== 'returned') {
-      return NextResponse.json({ success: false, error: 'El libro aún no ha sido devuelto' }, { status: 400 });
     }
 
     const loan = await prisma.loan.create({

@@ -54,6 +54,14 @@ export async function PATCH(req: Request) {
       },
     });
 
+    // Update book availability to true when returned
+    await prisma.book.update({
+      where: { id: loan.bookId },
+      data: {
+        available: true
+      },
+    });
+
     // Create notification for the borrower
     const { title, message } = getNotificationContent('LOAN_RETURNED', loan.book.title);
     await createNotification({

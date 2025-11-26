@@ -6,7 +6,7 @@ import CardBookComponent from "../bookRelatedComponents/cardBookComponent";
 import { Book } from "@/types/book";
 import { motion } from "framer-motion";
 
-export default function SearchHeroClient({ defaultBooks }: { defaultBooks: Book[] }) {
+export default function SearchHeroClient({ defaultBooks, session }: { defaultBooks: Book[], session: any | null }) {
   const [query, setQuery] = useState("");
   const [books, setBooks] = useState<Book[]>(defaultBooks);
 
@@ -95,7 +95,7 @@ export default function SearchHeroClient({ defaultBooks }: { defaultBooks: Book[
                   ease: "easeOut",
                   }}
                 >
-                <CardBookComponent key={book.id} book={book} />
+                <CardBookComponent key={book.id} book={book} session={session} />
                 </motion.div>
             ))
         )}

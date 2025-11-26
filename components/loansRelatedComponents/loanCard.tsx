@@ -278,19 +278,49 @@ function LoadCard({loan, deleteLoan}: {loan:Loan; deleteLoan: (loanId: string ) 
         }
     };
 
+    const getDaysRemaining = (): { text: string; color: string } => {
+        if (!loan.dueDate || loan.status !== 'approved') {
+            return { text: '', color: '' };
+        }
+
+        const now = new Date();
+        const due = new Date(loan.dueDate);
+        const diffTime = due.getTime() - now.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays < 0) {
+            return { text: 'DEUDA', color: 'text-red-600 font-bold' };
+        } else if (diffDays === 0) {
+            return { text: 'Vence hoy', color: 'text-orange-600 font-semibold' };
+        } else if (diffDays === 1) {
+            return { text: '1 día restante', color: 'text-yellow-600 font-semibold' };
+        } else {
+            return { text: `${diffDays} días restantes`, color: 'text-green-600 font-semibold' };
+        }
+    };
+
     return(
         
         <Card className={getStatusBorderColor(loan.status)}>
             <CardContent className="p-6">
             <div className="flex flex-col md:flex-row gap-4">
                 
-                <div className="relative h-[180px] w-[120px] flex-shrink-0 mx-auto md:mx-0">
-                <Image
-                    src={loan.book.imgUrl || "/placeholder.svg"}
-                    alt={`Cover of ${loan.book.title}`}
-                    fill
-                    className="object-cover rounded-md"
-                />
+                <div className="flex flex-col items-center md:items-start">
+                    <div className="relative h-[180px] w-[120px] flex-shrink-0">
+                        <Image
+                            src={loan.book.imgUrl || "/placeholder.svg"}
+                            alt={`Cover of ${loan.book.title}`}
+                            fill
+                            className="object-cover rounded-md"
+                        />
+                    </div>
+                    {loan.status === 'approved' && loan.dueDate && (
+                        <div className={`mt-2 text-center px-3 py-1 rounded-md bg-white dark:bg-gray-800 border ${getDaysRemaining().text === 'DEUDA' ? 'border-red-500' : 'border-gray-300'}`}>
+                            <p className={`text-sm ${getDaysRemaining().color}`}>
+                                {getDaysRemaining().text}
+                            </p>
+                        </div>
+                    )}
                 </div>
         
                 <div className="flex-1">

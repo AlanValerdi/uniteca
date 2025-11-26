@@ -16,10 +16,12 @@ import { redirect } from "next/navigation";
 import { toast } from "sonner";
 import Link from "next/link";
 import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io";
+import { Session } from "next-auth";
 
 
 type Props = {
     book: Book
+    session?: Session | null
 }
 
 const statusMap = {
@@ -62,7 +64,7 @@ function setState(bookstatus: string) {
 
 
 
-export default function CardBookComponent({ book }: Props){
+export default function CardBookComponent({ book, session }: Props){
     // using state 
     const [isDialogOpen, setIsDialogOpen] = useState(false)
     const [isFavorited, setIsFavorited] = useState(false)
@@ -128,11 +130,13 @@ export default function CardBookComponent({ book }: Props){
                 body: JSON.stringify({ bookId: book.id }),
             });
     
-            const data = await res.json();
-    
             if (res.status === 401) {
+                setIsLoadingFavorite(false);
                 redirect("/signIn");
+                return;
             }
+
+            const data = await res.json();
     
             if (data.success) {
                 setIsFavorited(data.isFavorited);
@@ -166,18 +170,29 @@ export default function CardBookComponent({ book }: Props){
                     />
                     {/* Like Button */}
                     <div className="absolute top-3 right-3">
-                        <button
-                            onClick={handleToggleFavorite}
-                            disabled={isLoadingFavorite || isCheckingFavorite}
-                            className="p-2 rounded-full border-1 border-black dark:border-gray-300 bg-white dark:bg-gray-800 shadow-lg hover:scale-110 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
-                            title={isFavorited ? "Remover de favoritos" : "Añadir a favoritos"}
-                        >
-                            {isFavorited ? (
-                                <IoIosHeart className="text-[rgb(33,101,114)] text-xl" />
-                            ) : (
-                                <IoIosHeartEmpty className="text-gray-600 dark:text-gray-300 text-xl" />
-                            )}
-                        </button>
+                        {session?.user ? (
+                            <button
+                                onClick={handleToggleFavorite}
+                                disabled={isLoadingFavorite || isCheckingFavorite}
+                                className="p-2 rounded-full border-1 border-black dark:border-gray-300 bg-white dark:bg-gray-800 shadow-lg hover:scale-110 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+                                title={isFavorited ? "Remover de favoritos" : "Añadir a favoritos"}
+                            >
+                                {isFavorited ? (
+                                    <IoIosHeart className="text-[rgb(33,101,114)] text-xl" />
+                                ) : (
+                                    <IoIosHeartEmpty className="text-gray-600 dark:text-gray-300 text-xl" />
+                                )}
+                            </button>
+                        ) : (
+                            <Link href="/signIn">
+                                <button
+                                    className="p-2 rounded-full border-1 border-black dark:border-gray-300 bg-white dark:bg-gray-800 shadow-lg hover:scale-110 transition-transform"
+                                    title="Inicia sesión para añadir a favoritos"
+                                >
+                                    <IoIosHeartEmpty className="text-gray-600 dark:text-gray-300 text-xl" />
+                                </button>
+                            </Link>
+                        )}
                     </div>
                 </div>
                 <CardContent className="p-6 pt-6 space-y-4">

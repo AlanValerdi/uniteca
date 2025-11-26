@@ -52,7 +52,7 @@ export default async function FavoritesSection() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {books.map((book) => (
-              <CardBookComponent key={book.id} book={book} />
+              <CardBookComponent key={book.id} book={book} session={session} />
             ))}
           </div>
         )}

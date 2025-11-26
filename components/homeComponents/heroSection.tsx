@@ -1,7 +1,7 @@
 import getSuggestData from "@/app/actions/suggestedBooks";
 import SearchHeroClient from "./searchHeroClient";
 
-export default async function HeroSection() {
+export default async function HeroSection({ session }: { session: any | null }) {
     const books = await getSuggestData();
   
     return (
@@ -17,7 +17,7 @@ export default async function HeroSection() {
             
   
             {/* Reemplazar búsqueda aquí */}
-            <SearchHeroClient defaultBooks={books} />
+            <SearchHeroClient defaultBooks={books} session={session} />
 
           </div>
             
