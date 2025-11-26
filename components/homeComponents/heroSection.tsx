@@ -1,7 +1,8 @@
 import getSuggestData from "@/app/actions/suggestedBooks";
 import SearchHeroClient from "./searchHeroClient";
+import { Session } from "next-auth";
 
-export default async function HeroSection({ session }: { session: any | null }) {
+export default async function HeroSection({ session }: { session: Session | null }) {
     const books = await getSuggestData();
   
     return (

@@ -5,8 +5,9 @@ import { BookXIcon, Search } from "lucide-react";
 import CardBookComponent from "../bookRelatedComponents/cardBookComponent";
 import { Book } from "@/types/book";
 import { motion } from "framer-motion";
+import { Session } from "next-auth";
 
-export default function SearchHeroClient({ defaultBooks, session }: { defaultBooks: Book[], session: any | null }) {
+export default function SearchHeroClient({ defaultBooks, session }: { defaultBooks: Book[], session: Session | null }) {
   const [query, setQuery] = useState("");
   const [books, setBooks] = useState<Book[]>(defaultBooks);
 
